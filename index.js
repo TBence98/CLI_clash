@@ -1,18 +1,23 @@
 // The maximum is inclusive and the minimum is inclusive
 const getRandomInt = (min, max) => {
+    if (typeof min !== "number" || typeof max !== "number") {
+        throw new TypeError("percentage must be a number");
+    }
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const calculateChances = (percentage) => {
-    if (getRandomInt(1, 100) <= percentage) return true;
-    return false;
+const doesEventOccurWithProbability = (percentage) => {
+    if (typeof percentage !== "number" || percentage < 0 || percentage > 100) {
+        throw new TypeError("percentage must be a number between 0 and 100");
+    }
+    return Math.random() < percentage / 100;
 };
 
 class Arena {
     static #selectAttacker(player1, player2) {
-        if (calculateChances(50)) return player1;
+        if (doesEventOccurWithProbability(50)) return player1;
         return player2;
     }
 
@@ -28,7 +33,7 @@ class Arena {
     }
 
     static #isAbilityActive(player) {
-        if (calculateChances(10)) {
+        if (doesEventOccurWithProbability(10)) {
             player.activateAbility();
         }
     }
@@ -181,7 +186,7 @@ class Hero {
         console.log(this.name + " Defending...");
         const hitChance = incomingHitChance - this.evasion;
 
-        if (!calculateChances(hitChance)) {
+        if (!doesEventOccurWithProbability(hitChance)) {
             console.log("Successful defend!");
             return;
         }
